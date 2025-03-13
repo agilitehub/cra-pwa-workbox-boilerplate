@@ -9,6 +9,57 @@ const PWAStatus = () => {
   const [updateAvailable, setUpdateAvailable] = useState(false);
   const [registration, setRegistration] = useState(null);
 
+  // Set up service worker message listener and periodic update checks
+  useEffect(() => {
+    // Function to check for updates
+    const checkForUpdates = (reg) => {
+      if (!reg) return;
+      
+      // Check if there's a waiting service worker
+      if (reg.waiting) {
+        setUpdateAvailable(true);
+        return;
+      }
+      
+      // Send a message to the service worker to check for updates
+      if (navigator.serviceWorker.controller) {
+        navigator.serviceWorker.controller.postMessage({
+          type: 'CHECK_FOR_UPDATES'
+        });
+      }
+    };
+
+    // Listen for messages from the service worker
+    const handleServiceWorkerMessage = (event) => {
+      if (event.data && event.data.type === 'UPDATE_AVAILABLE') {
+        setUpdateAvailable(true);
+      }
+      
+      if (event.data && event.data.type === 'UPDATE_CHECK_RESULT') {
+        setUpdateAvailable(event.data.updateAvailable);
+      }
+    };
+
+    // Add message listener
+    navigator.serviceWorker.addEventListener('message', handleServiceWorkerMessage);
+    
+    // Set up periodic update checks (every 1 minute)
+    const updateCheckInterval = setInterval(() => {
+      if (registration) {
+        // Force a check for updates
+        registration.update().then(() => {
+          checkForUpdates(registration);
+        });
+      }
+    }, 60 * 1000); // 1 minute
+    
+    return () => {
+      // Clean up
+      navigator.serviceWorker.removeEventListener('message', handleServiceWorkerMessage);
+      clearInterval(updateCheckInterval);
+    };
+  }, [registration]);
+
   useEffect(() => {
     // Check if the app is installed
     if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
@@ -42,6 +93,11 @@ const PWAStatus = () => {
               }
             });
           });
+          
+          // Check if there's already a waiting service worker
+          if (reg.waiting) {
+            setUpdateAvailable(true);
+          }
         } else {
           setServiceWorkerStatus('not-registered');
         }
@@ -85,6 +141,16 @@ const PWAStatus = () => {
     
     // Reload the page to activate the new service worker
     window.location.reload();
+  };
+
+  // Force check for updates
+  const checkForUpdates = () => {
+    if (!registration) return;
+    
+    // Update the registration
+    registration.update().catch(err => {
+      console.error('Error checking for updates:', err);
+    });
   };
 
   return (
@@ -134,6 +200,12 @@ const PWAStatus = () => {
               <div className="flex items-center text-green-500">
                 <FontAwesomeIcon icon={faCheck} className="mr-2" />
                 <span>Service worker registered</span>
+                <button 
+                  onClick={checkForUpdates}
+                  className="ml-4 text-blue-500 text-sm underline hover:text-blue-700"
+                >
+                  Check for updates
+                </button>
               </div>
             )}
             

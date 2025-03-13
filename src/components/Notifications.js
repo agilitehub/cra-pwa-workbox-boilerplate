@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBell, faBellSlash, faCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faBell, faCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { requestNotificationPermission, displayNotification } from '../firebase/messaging';
 
 const Notifications = () => {

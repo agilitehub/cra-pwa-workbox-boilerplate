@@ -5,7 +5,7 @@
 
 import { initializeApp } from 'firebase/app';
 import { getMessaging } from 'firebase/messaging';
-import { firebaseConfig, firebaseOptions } from './firebaseConfig';
+import { firebaseConfig } from './firebaseConfig';
 
 // Initialize Firebase
 let app;

@@ -17,21 +17,31 @@ const {
   precaching, 
   expiration, 
   backgroundSync, 
-  cacheableResponse,
-  navigationPreload
+  cacheableResponse
 } = workbox;
-
-// Enable navigation preload
-navigationPreload.enable();
 
 // Precache and route
 precaching.precacheAndRoute(self.__WB_MANIFEST);
 
+// Register a route for navigation requests using NetworkFirst strategy
+// This completely avoids using navigation preload
+routing.registerRoute(
+  ({ request }) => request.mode === 'navigate',
+  new strategies.NetworkFirst({
+    cacheName: 'pages',
+    plugins: [
+      new expiration.ExpirationPlugin({
+        maxEntries: 25,
+        maxAgeSeconds: 24 * 60 * 60, // 24 hours
+      }),
+    ],
+  })
+);
+
 // Cache static assets
 routing.registerRoute(
   ({ request }) => request.destination === 'script' || 
-                  request.destination === 'style' || 
-                  request.destination === 'document',
+                  request.destination === 'style',
   new strategies.StaleWhileRevalidate({
     cacheName: 'static-resources',
     plugins: [
@@ -123,12 +133,48 @@ routing.setCatchHandler(async ({ event }) => {
     case 'document':
       return caches.match('/offline.html');
     case 'image':
-      return caches.match('/offline-image.png');
+      return caches.match('/offline-image.svg');
     case 'font':
       return caches.match('/offline-font.woff2');
     default:
       return Response.error();
   }
+});
+
+// Listen for message events from clients
+self.addEventListener('message', (event) => {
+  // Handle SKIP_WAITING message
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
+  
+  // Handle CHECK_FOR_UPDATES message
+  if (event.data && event.data.type === 'CHECK_FOR_UPDATES') {
+    // Respond to the client that sent the message
+    if (event.source) {
+      event.source.postMessage({
+        type: 'UPDATE_CHECK_RESULT',
+        updateAvailable: self.registration.waiting ? true : false
+      });
+    }
+  }
+});
+
+// When a new service worker is installed and waiting, notify all clients
+self.addEventListener('install', (event) => {
+  // Perform install steps
+  event.waitUntil(
+    // After installation, notify all clients about the update
+    self.skipWaiting().then(() => {
+      self.clients.matchAll().then(clients => {
+        clients.forEach(client => {
+          client.postMessage({
+            type: 'UPDATE_AVAILABLE'
+          });
+        });
+      });
+    })
+  );
 });
 
 // Skip waiting and clients claim

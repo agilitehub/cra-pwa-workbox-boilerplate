@@ -20,20 +20,26 @@ reportWebVitals();
 // Register the service worker for PWA functionality
 serviceWorker.register({
   onUpdate: registration => {
-    // Show a notification to the user that a new version is available
-    const waitingServiceWorker = registration.waiting;
+    // The PWAStatus component will handle the update notification
+    // We don't need to show a confirmation dialog here anymore
     
+    // Set up a listener for messages from the service worker
+    navigator.serviceWorker.addEventListener('message', event => {
+      if (event.data && event.data.type === 'UPDATE_AVAILABLE') {
+        console.log('Update available notification received from service worker');
+        // The PWAStatus component will handle showing the update notification
+      }
+    });
+    
+    // Set up a listener for when the waiting service worker becomes active
+    const waitingServiceWorker = registration.waiting;
     if (waitingServiceWorker) {
       waitingServiceWorker.addEventListener('statechange', event => {
         if (event.target.state === 'activated') {
+          // Reload once the new service worker is activated
           window.location.reload();
         }
       });
-      
-      // Prompt user to update
-      if (window.confirm('A new version of this app is available. Reload to update?')) {
-        waitingServiceWorker.postMessage({ type: 'SKIP_WAITING' });
-      }
     }
   },
   onSuccess: registration => {

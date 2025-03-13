@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus, faTrash, faSync, faSave, faCheck, faTimes, faEraser } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faTrash, faSync, faCheck, faEraser } from '@fortawesome/free-solid-svg-icons';
 import { getAllItems, checkAndFixDatabase, clearAllData } from '../db/indexedDB';
 import { createItemWithSync, updateItemWithSync, deleteItemWithSync, SYNC_STATUS, processSyncQueue } from '../db/dbSync';
 import { STORES } from '../db/indexedDB';

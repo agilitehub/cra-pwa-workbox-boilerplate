@@ -11,7 +11,6 @@ import './App.css';
 
 function App() {
   const [activeTab, setActiveTab] = useState('todo');
-  const [dbInitialized, setDbInitialized] = useState(false);
   const [dbError, setDbError] = useState(null);
 
   useEffect(() => {
@@ -19,7 +18,7 @@ function App() {
     const initDatabase = async () => {
       try {
         await checkAndFixDatabase();
-        setDbInitialized(true);
+        // Database initialized successfully
       } catch (error) {
         console.error('Error initializing database:', error);
         setDbError('Failed to initialize database. Please refresh the page.');
