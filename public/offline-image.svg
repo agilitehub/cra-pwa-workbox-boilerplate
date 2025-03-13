@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="150" viewBox="0 0 200 150">
+  <rect width="200" height="150" fill="#f0f0f0" />
+  <text x="100" y="75" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#888888">Image not available offline</text>
+  <path d="M80,60 L120,60 L120,90 L80,90 Z" stroke="#888888" stroke-width="2" fill="none" />
+  <path d="M85,75 L95,65 L105,75 L115,65" stroke="#888888" stroke-width="2" fill="none" />
+  <circle cx="110" cy="70" r="5" fill="#888888" />
+</svg> 
