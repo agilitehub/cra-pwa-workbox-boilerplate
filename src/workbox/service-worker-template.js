@@ -17,14 +17,18 @@ const {
   precaching, 
   expiration, 
   backgroundSync, 
-  cacheableResponse
+  cacheableResponse,
+  navigationPreload
 } = workbox;
 
 // Precache and route
 precaching.precacheAndRoute(self.__WB_MANIFEST);
 
+// Disable navigation preload since we're not using it
+// This prevents the "navigation preload request was cancelled" warning
+navigationPreload.disable();
+
 // Register a route for navigation requests using NetworkFirst strategy
-// This completely avoids using navigation preload
 routing.registerRoute(
   ({ request }) => request.mode === 'navigate',
   new strategies.NetworkFirst({

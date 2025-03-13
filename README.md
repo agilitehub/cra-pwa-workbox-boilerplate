@@ -11,6 +11,7 @@ This project provides a boilerplate for creating Progressive Web Applications (P
 - **Push notifications** via Firebase Cloud Messaging (FCM)
 - **Deployment** to Firebase Hosting
 - **Modern UI** with TailwindCSS and FontAwesome
+- **Centralized configuration** using environment variables
 
 ## Demo
 
@@ -29,15 +30,58 @@ src/
 │   ├── dbSync.js       # Data synchronization logic
 │   └── models/         # Data models
 ├── firebase/           # Firebase implementation
-│   ├── firebaseConfig.js # Firebase configuration
+│   ├── firebase.js     # Firebase initialization
 │   ├── messaging.js    # Firebase Cloud Messaging
-│   └── firebase.js     # Firebase initialization
+│   └── firebaseConfig.js # Firebase configuration
 ├── workbox/            # Workbox implementation
 │   ├── serviceWorker.js # Service worker registration
-│   ├── workboxConfig.js # Workbox caching strategies
 │   └── service-worker-template.js # Service worker template
-└── App.js              # Main application component
+└── config.js           # Centralized configuration from environment variables
 ```
+
+## Environment Variables
+
+This project uses environment variables for configuration to keep sensitive information out of the codebase. This makes it more secure and easier to configure for different environments.
+
+### Setup
+
+1. Copy the `.env.example` file to a new file named `.env`:
+   ```
+   cp .env.example .env
+   ```
+
+2. Edit the `.env` file and replace the placeholder values with your actual configuration:
+   ```
+   # Firebase Configuration
+   REACT_APP_FIREBASE_API_KEY=your-api-key
+   REACT_APP_FIREBASE_AUTH_DOMAIN=your-project-id.firebaseapp.com
+   # ... other variables
+   ```
+
+3. For Firebase configuration, you'll need to create a Firebase project and web app at [Firebase Console](https://console.firebase.google.com/).
+
+### Available Environment Variables
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `REACT_APP_FIREBASE_API_KEY` | Firebase API Key | - |
+| `REACT_APP_FIREBASE_AUTH_DOMAIN` | Firebase Auth Domain | - |
+| `REACT_APP_FIREBASE_PROJECT_ID` | Firebase Project ID | - |
+| `REACT_APP_FIREBASE_STORAGE_BUCKET` | Firebase Storage Bucket | - |
+| `REACT_APP_FIREBASE_MESSAGING_SENDER_ID` | Firebase Messaging Sender ID | - |
+| `REACT_APP_FIREBASE_APP_ID` | Firebase App ID | - |
+| `REACT_APP_FIREBASE_MEASUREMENT_ID` | Firebase Measurement ID | - |
+| `REACT_APP_FIREBASE_VAPID_KEY` | Firebase VAPID Key for Web Push | - |
+| `REACT_APP_API_ENDPOINT_TODOS` | API Endpoint for Todos | `https://nodered.agilite.io/api/pwa/todos` |
+| `REACT_APP_INDEXEDDB_NAME` | IndexedDB Database Name | `pwa-boilerplate` |
+| `REACT_APP_INDEXEDDB_VERSION` | IndexedDB Database Version | `1` |
+| `REACT_APP_SW_UPDATE_CHECK_INTERVAL` | Service Worker Update Check Interval (ms) | `60000` |
+
+### Important Notes
+
+- **Never commit your `.env` file to version control**. It's already added to `.gitignore`.
+- The `.env.example` file should be committed as it serves as documentation for required environment variables.
+- For production deployment, you'll need to set these environment variables in your hosting platform.
 
 ## Quick Start Guide
 

@@ -4,6 +4,7 @@
  */
 
 import { STORES, addItem, getItemsByIndex, updateItem, deleteItem, getItemById, getAllItems } from './indexedDB';
+import { API_ENDPOINTS } from '../config';
 
 // Sync status constants
 export const SYNC_STATUS = {
@@ -15,9 +16,10 @@ export const SYNC_STATUS = {
 /**
  * API Configuration
  * 
- * These endpoints should be updated to match your backend API.
- * Each endpoint should support the following operations:
+ * These endpoints are imported from the centralized config.js file,
+ * which reads values from environment variables.
  * 
+ * Each endpoint should support the following operations:
  * - POST /endpoint - Create a new item
  * - PUT /endpoint/:id - Update an existing item
  * - DELETE /endpoint/:id - Delete an item
@@ -27,11 +29,7 @@ export const SYNC_STATUS = {
  * - For PUT: The updated item
  * - For DELETE: Any successful response (200-299)
  */
-export const API_ENDPOINTS = {
-  TODOS: 'https://nodered.agilite.io/api/pwa/todos',
-  // Add more endpoints for other stores as needed
-  // USERS: 'https://your-api.com/users',
-};
+export { API_ENDPOINTS };
 
 /**
  * Add an item to the sync queue

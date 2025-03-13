@@ -18,10 +18,20 @@ let messaging;
 export const initializeFirebase = () => {
   if (!app) {
     try {
+      // Check if Firebase configuration is valid
+      if (!firebaseConfig.apiKey || !firebaseConfig.projectId || !firebaseConfig.appId) {
+        console.warn(
+          'Firebase configuration is incomplete. Make sure to set the required environment variables. ' +
+          'See the .env.example file for required variables.'
+        );
+        return null;
+      }
+      
       app = initializeApp(firebaseConfig);
       console.log('Firebase initialized successfully');
     } catch (error) {
       console.error('Error initializing Firebase:', error);
+      return null;
     }
   }
   return app;
@@ -34,6 +44,12 @@ export const initializeFirebase = () => {
 export const getFirebaseMessaging = () => {
   if (!messaging && app) {
     try {
+      // Check if messaging is supported in this browser
+      if (!('Notification' in window)) {
+        console.warn('This browser does not support notifications');
+        return null;
+      }
+      
       messaging = getMessaging(app);
     } catch (error) {
       console.error('Error getting Firebase messaging:', error);

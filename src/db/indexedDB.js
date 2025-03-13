@@ -3,9 +3,11 @@
  * This file provides a wrapper around IndexedDB for local data storage
  */
 
-// Database name and version
-const DB_NAME = 'pwaBoilerplateDB';
-const DB_VERSION = 2; // Incrementing the version to trigger an upgrade
+import { DB_CONFIG } from '../config';
+
+// Database name and version from centralized config
+const DB_NAME = DB_CONFIG.name;
+const DB_VERSION = DB_CONFIG.version;
 
 // Store names
 export const STORES = {

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDownload, faCheck, faInfoCircle, faExclamationTriangle, faRedo } from '@fortawesome/free-solid-svg-icons';
+import { SW_CONFIG } from '../config';
 
 const PWAStatus = () => {
   const [isInstalled, setIsInstalled] = useState(false);
@@ -43,7 +44,7 @@ const PWAStatus = () => {
     // Add message listener
     navigator.serviceWorker.addEventListener('message', handleServiceWorkerMessage);
     
-    // Set up periodic update checks (every 1 minute)
+    // Set up periodic update checks using interval from config
     const updateCheckInterval = setInterval(() => {
       if (registration) {
         // Force a check for updates
@@ -51,7 +52,7 @@ const PWAStatus = () => {
           checkForUpdates(registration);
         });
       }
-    }, 60 * 1000); // 1 minute
+    }, SW_CONFIG.updateCheckInterval); // Use interval from config
     
     return () => {
       // Clean up
